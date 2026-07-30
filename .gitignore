@@ -70,6 +70,18 @@ AGENTS.override.md
 # Local Electron development
 .context/cherry-electron-dev/
 
+# Local runtime data directory
+cherry-studio-data/
+
+# Local startup scripts
+start.bat
+start.ps1
+start-quick.bat
+start-quick.ps1
+start-fast.bat
+start-fast.ps1
+start-dev.bat
+
 # vitest
 coverage
 .vitest-cache
@@ -94,3 +106,9 @@ YOUR_MEMORY_FILE_PATH
 .sessions/
 .devtools
 .omo/
+
+# Local startup scripts (VBS)
+start-fast.vbs
+
+# Electron-vite temp config files
+electron.vite.config.*.mjs

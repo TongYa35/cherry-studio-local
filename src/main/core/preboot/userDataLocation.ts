@@ -45,8 +45,20 @@ export function canonicalizeUserDataPath(userDataPath: string): string {
  * sessionData path was set. Keeping this setPath call before app.whenReady()
  * therefore carries Cookies, Local Storage, IndexedDB, and other Chromium
  * storage to the selected directory as well.
+ *
+ * Environment variable CS_USER_DATA_PATH overrides the userData path in both
+ * dev and production modes, allowing the data directory to be kept alongside
+ * the source code (e.g. E:\cherry-studio\cherry-studio-data).
  */
 export function resolveUserDataLocation(): void {
+  // Env var override: CS_USER_DATA_PATH takes highest priority
+  const envOverride = process.env.CS_USER_DATA_PATH?.trim()
+  if (envOverride && path.isAbsolute(envOverride)) {
+    app.setPath('userData', envOverride)
+    logger.info('userData set from CS_USER_DATA_PATH env', { envOverride })
+    return
+  }
+
   if (!app.isPackaged) {
     const devPath = app.getPath('userData') + resolveDevUserDataSuffix()
     app.setPath('userData', devPath)
