@@ -235,6 +235,7 @@
           "discard_and_continue": "Descartar y continuar",
           "title": "¿Descartar cambios no guardados?"
         },
+        "metadata_pending": "[to be translated]:The file was saved, but its metadata is still being recovered. Do not retry this save.",
         "refresh_failed": "No se puede volver a cargar el contenido más reciente del archivo.",
         "save_failed": "No se puede guardar este archivo. El guardado automático está pausado hasta que reintente o descarte los cambios.",
         "unsaved": "No guardado",
@@ -633,7 +634,8 @@
           },
           "auto": {
             "description": "Se ejecuta sin preguntas rutinarias. Una comprobación de seguridad bloquea las acciones arriesgadas.",
-            "title": "Aprobar por mí"
+            "title": "Aprobar por mí",
+            "warning": "Requiere un modelo compatible; otros pueden ignorarlo o seguir preguntando."
           },
           "bypassPermissions": {
             "description": "Omite las comprobaciones de permisos. Puede eliminar archivos y usar la red.",
@@ -1267,10 +1269,6 @@
           "tip": "El agente utilizará la capacidad del modelo grande para el reconocimiento de intenciones y decidirá si necesita invocar la base de conocimientos para responder. Esta función dependerá de las capacidades del modelo"
         }
       },
-      "max_tool_calls": {
-        "label": "Llamadas Máximas de Herramientas",
-        "tip": "Número máximo de llamadas a herramientas permitidas en una sola conversación. Valores más altos permiten operaciones de múltiples pasos más complejas, pero pueden incrementar el uso de tokens y el tiempo de respuesta."
-      },
       "mcp": {
         "description": "Servidor MCP habilitado por defecto",
         "enableFirst": "Habilite este servidor en la configuración de MCP primero",
@@ -1476,9 +1474,8 @@
       "image_preview_failed": "La vista previa de la imagen falló",
       "knowledge_base": "Base de conocimientos",
       "knowledge_base_disabled_by_files": "Elimina los archivos adjuntos para utilizar la Base de Conocimiento",
-      "knowledge_base_unavailable": "Selecciona un modelo capaz de usar herramientas o habilita el uso de herramientas en el prompt.",
+      "knowledge_base_unavailable": "Selecciona un modelo capaz de usar herramientas",
       "locate_editing_message": "Localizar mensaje original",
-      "mcp_unavailable": "Selecciona un modelo con capacidad para herramientas o habilita el uso de herramientas en el prompt.",
       "new": {
         "context": "Limpiar contexto {{Command}}"
       },
@@ -1619,13 +1616,8 @@
       }
     },
     "mcp": {
-      "error": {
-        "parse_tool_call": "No se puede convertir al formato de llamada de herramienta válido: {{toolCall}}"
-      },
       "warning": {
         "gemini_web_search": "Gemini no admite el uso simultáneo de herramientas de búsqueda nativa y llamadas de funciones",
-        "multiple_tools": "Existen múltiples herramientas MCP coincidentes, se ha seleccionado {{tool}}",
-        "no_tool": "No se encontró la herramienta MCP requerida {{tool}}",
         "url_context": "Gemini no admite el uso simultáneo del contexto de la página web y las llamadas a funciones."
       }
     },
@@ -4502,7 +4494,8 @@
     "save_blocked_load_failed": "Guardado bloqueado porque no se pudo cargar la nota",
     "save_failed": "Error al guardar la nota",
     "save_failure": {
-      "description": "Esta nota no se pudo guardar. Tus ediciones permanecen en el editor y el guardado automático está pausado."
+      "description": "Esta nota no se pudo guardar. Tus ediciones permanecen en el editor y el guardado automático está pausado.",
+      "metadata_pending": "[to be translated]:The note was saved, but its file metadata is still being recovered. Do not retry this save."
     },
     "search": {
       "both": "Nombre + Contenido",
@@ -7751,6 +7744,13 @@
           "toggle_client_email_visibility": "Alternar la visibilidad del correo electrónico del cliente",
           "toggle_private_key_visibility": "Alternar la visibilidad de la clave privada",
           "toggle_project_id_visibility": "Alternar la visibilidad del ID del proyecto"
+        }
+      },
+      "radeon_cloud": {
+        "benefits": {
+          "cta": "Abrir Token Factory",
+          "description": "Equivale a 10 USD diarios en créditos de API: unos 10M–111M tokens de entrada/salida con las tarifas actuales, según el modelo y el tipo de token. Los créditos se restablecen a diario; actualmente no se admiten recargas.",
+          "title": "10 USD diarios en créditos de API gratuitos"
         }
       }
     },
