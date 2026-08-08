@@ -1,6 +1,7 @@
 import { Tooltip } from '@cherrystudio/ui'
 import { loggerService } from '@logger'
-import { ContextUsageSummary, getAgentContextUsageColor } from '@renderer/components/chat/agent/ContextUsageSummary'
+import { AgentContextUsageSummary } from '@renderer/components/chat/agent/AgentContextUsageSummary'
+import { ContextUsageMeter } from '@renderer/components/chat/contextUsage'
 import { useChatLayoutMode } from '@renderer/components/chat/layout/ChatLayoutModeContext'
 import {
   ConversationTopBarPortal,
@@ -53,7 +54,6 @@ import { buildFilePartsForAttachments, withComposerFilePartMeta } from '@rendere
 import { getSendMessageShortcutLabel } from '@renderer/utils/input'
 import type { ComposerAttachment } from '@renderer/utils/message/composerAttachment'
 import { resolveReasoningEffortForModel } from '@renderer/utils/model'
-import { cn } from '@renderer/utils/style'
 import type { ComposerQueuedMessagePayload } from '@shared/ai/transport'
 import type { AgentEntity } from '@shared/data/types/agent'
 import type { KnowledgeBase } from '@shared/data/types/knowledge'
@@ -62,6 +62,7 @@ import { type Model, parseUniqueModelId } from '@shared/data/types/model'
 import { getKnowledgeBaseIdsFromParts, withKnowledgeScopePart } from '@shared/data/types/uiParts'
 import type { OutputFor } from '@shared/ipc/types'
 import type { LocalSkill } from '@shared/types/skill'
+import { formatGatewayModelId } from '@shared/utils/apiGateway'
 import { type CanonicalFilePath, canonicalizeFilePath, createFilePathHandle, toFileUrl } from '@shared/utils/file'
 import { Settings2, Terminal, ToolCase } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -454,7 +455,7 @@ function AgentComposerContextUsage({ model, sessionId }: { model?: Model; sessio
   if (percentage === null || !usage) return null
 
   const isCompacting = compaction.status === 'compacting'
-  const ringColor = getAgentContextUsageColor(percentage)
+  const label = t('agent.right_pane.info.context_usage')
 
   return (
     <Tooltip
@@ -467,42 +468,42 @@ function AgentComposerContextUsage({ model, sessionId }: { model?: Model; sessio
           'w-64 max-w-64 rounded-md border border-border bg-card p-3 text-card-foreground shadow-md dark:bg-card dark:text-card-foreground'
       }}
       content={
-        <ContextUsageSummary
+        <AgentContextUsageSummary
           usage={usage}
           percentage={percentage}
-          color={ringColor}
           isCompacting={isCompacting}
+          modelName={model?.name}
           showCategories={false}
         />
       }>
-      <span
-        aria-label={`${t('agent.right_pane.info.context_usage')} ${percentage}%`}
-        aria-busy={isCompacting || undefined}
+      <ContextUsageMeter
+        label={label}
+        percentage={percentage}
+        isBusy={isCompacting}
         // The cached reading is only refreshed when a turn settles, so it goes stale mid-turn. Main
         // throttles this and answers on the shared-cache key; a session with no live connection
         // keeps showing its last reading.
         onPointerEnter={() => {
           void ipcApi.request('ai.agent.session.refresh_context_usage', { sessionId })
         }}
-        className={cn(
-          'relative inline-grid size-5 shrink-0 place-items-center rounded-full bg-[conic-gradient(var(--context-usage-color)_var(--context-usage-progress),var(--border-subtle)_0)]',
-          isCompacting && 'animate-pulse'
-        )}
-        style={
-          {
-            '--context-usage-color': ringColor,
-            '--context-usage-progress': `${percentage}%`
-          } as React.CSSProperties
-        }>
-        <span aria-hidden className="absolute inset-[2px] rounded-full bg-card" />
-      </span>
+      />
     </Tooltip>
   )
 }
 
 function getContextUsageModelCandidates(model: Model | undefined): string[] | undefined {
   if (!model) return undefined
-  return [model.apiModelId, parseUniqueModelId(model.id).modelId].filter((value): value is string => Boolean(value))
+  const { providerId, modelId } = parseUniqueModelId(model.id)
+  const apiModelId = model.apiModelId ?? modelId
+  const candidates = [apiModelId, modelId]
+
+  try {
+    candidates.push(formatGatewayModelId(providerId, apiModelId))
+  } catch {
+    // Some models are intentionally not gateway-addressable; their direct ids remain valid candidates.
+  }
+
+  return candidates
 }
 
 type AgentComposerControlProps = Omit<
